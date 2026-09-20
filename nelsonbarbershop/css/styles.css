@@ -1,5 +1,5 @@
 /* ============================================
-   NELSONBARBERSHOPPMZ — Premium Black & White
+   NELSONBARBERSHOPPMZ — Premium Black, White & Gold
    ============================================ */
 
 :root {
@@ -12,6 +12,12 @@
   --gray-soft: #c0c0c0;
   --white: #ffffff;
   --white-soft: #f5f5f5;
+  --gold: #b8972e;
+  --gold-soft: #d4b84a;
+  --gold-bright: #e8d48a;
+  --gold-dim: rgba(184, 151, 46, 0.35);
+  --gold-border: rgba(212, 184, 74, 0.75);
+  --gold-glow: 0 0 16px rgba(232, 212, 138, 0.4), 0 0 4px rgba(184, 151, 46, 0.55);
   --border: rgba(255, 255, 255, 0.12);
   --shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   --transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -362,8 +368,9 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.5rem); }
 .header .btn:focus {
   color: #000000 !important;
   background: #ffffff !important;
-  border: 1px solid #ffffff !important;
+  border: 1px solid var(--gold) !important;
   -webkit-text-fill-color: #000000 !important;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.25);
 }
 
 .nav a.btn::after,
@@ -1291,4 +1298,261 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.5rem); }
   .logo-text span {
     font-size: 0.55rem;
   }
+}
+
+
+/* ---------- Gold: só títulos, citações e botões ---------- */
+
+/* Títulos em dourado brilhante */
+h1, h2,
+.section-header h2,
+.page-hero h1,
+.service-category h2,
+.hero h1 {
+  color: var(--gold-bright);
+  text-shadow: 0 0 24px rgba(232, 212, 138, 0.28);
+}
+
+/* Citações em dourado */
+.quote-block {
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--gray-dark);
+}
+
+.quote-block blockquote {
+  font-family: var(--font-title);
+  font-size: clamp(1.15rem, 2.8vw, 1.65rem);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+  text-shadow: 0 0 20px rgba(232, 212, 138, 0.32);
+  max-width: 720px;
+  margin: 0 auto 0.8rem;
+  line-height: 1.4;
+}
+
+.quote-block cite {
+  font-style: normal;
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+}
+
+.quote-block .quote-line {
+  width: 56px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+  box-shadow: var(--gold-glow);
+  margin: 0 auto 1.2rem;
+}
+
+/* Restantes textos: branco / cinza */
+.section-header .label,
+.page-hero .label,
+.hero-label,
+.intro-tagline {
+  color: var(--gray-soft);
+}
+
+.nav a.active {
+  color: var(--white);
+}
+
+.nav a.active::after,
+.nav a:hover::after {
+  background: var(--white);
+}
+
+.header.scrolled {
+  border-bottom-color: var(--border);
+}
+
+.logo-text span {
+  color: var(--gray-light);
+}
+
+.priority {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--gray-dark);
+}
+
+.priority p {
+  color: var(--white);
+}
+
+.service-category h2 {
+  border-bottom: 1px solid var(--border);
+}
+
+.service-price {
+  color: var(--white);
+}
+
+/* Botões: borda + sombra dourada brilhante */
+.btn {
+  border: 1px solid var(--gold-border);
+  box-shadow: var(--gold-glow);
+}
+
+.btn:hover {
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 22px rgba(232, 212, 138, 0.55), 0 0 6px rgba(184, 151, 46, 0.7);
+}
+
+.btn-outline {
+  border: 1px solid var(--gold-border);
+  color: var(--white);
+  -webkit-text-fill-color: var(--white);
+  background: transparent;
+  box-shadow: var(--gold-glow);
+}
+
+.btn-outline:hover {
+  border-color: var(--gold-bright);
+  background: transparent;
+  color: var(--white);
+  -webkit-text-fill-color: var(--white);
+  box-shadow: 0 0 22px rgba(232, 212, 138, 0.55), 0 0 6px rgba(184, 151, 46, 0.7);
+}
+
+/* Header btn: fundo branco, texto preto, borda/sombra dourada */
+.nav a.btn,
+.nav a.btn.btn-sm,
+.header .btn,
+.header a.btn,
+.nav a.btn:hover,
+.nav a.btn.btn-sm:hover,
+.header .btn:hover,
+.header a.btn:hover,
+.nav a.btn:focus,
+.nav a.btn.btn-sm:focus,
+.header .btn:focus {
+  color: #000000 !important;
+  background: #ffffff !important;
+  border: 1px solid var(--gold-bright) !important;
+  -webkit-text-fill-color: #000000 !important;
+  box-shadow: var(--gold-glow) !important;
+}
+
+.wa-float {
+  border: 1px solid var(--gold-border);
+  box-shadow: var(--gold-glow);
+}
+
+.wa-float:hover {
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 22px rgba(232, 212, 138, 0.55);
+}
+
+.footer h4 {
+  color: var(--white);
+}
+
+.footer {
+  border-top: 1px solid var(--border);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--gray-light);
+}
+
+.phone-group:focus-within {
+  border-color: var(--gray-light) !important;
+}
+
+.contact-item .icon {
+  border-color: var(--border);
+}
+
+.social-links a {
+  border-color: var(--border);
+}
+
+.social-links a:hover {
+  background: var(--white);
+  border-color: var(--white);
+}
+
+.page-hero {
+  border-bottom-color: var(--border);
+}
+
+.modal {
+  border-color: var(--border);
+}
+
+.form-note {
+  border-color: var(--border);
+}
+
+.form-note strong {
+  color: var(--white);
+}
+
+/* Phone input with country code */
+.phone-group {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border);
+  background: var(--gray-dark);
+  transition: border-color var(--transition);
+}
+
+.phone-group:focus-within {
+  border-color: var(--gray-light);
+}
+
+.phone-group select {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 110px;
+  padding: 0.85rem 0.6rem 0.85rem 0.9rem;
+  background: var(--gray);
+  border: none;
+  border-right: 1px solid var(--border);
+  color: var(--white);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238a8a8a' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  padding-right: 1.6rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.phone-group input {
+  flex: 1;
+  border: none !important;
+  background: transparent !important;
+  padding: 0.85rem 1rem;
+  min-width: 0;
+}
+
+.phone-group input:focus {
+  outline: none;
+}
+
+.form-group .phone-hint {
+  font-size: 0.75rem;
+  color: var(--gray-light);
+  margin-top: 0.35rem;
+}
+
+.form-group .phone-error {
+  font-size: 0.75rem;
+  color: #e07070;
+  margin-top: 0.35rem;
+  display: none;
+}
+
+.form-group .phone-error.visible {
+  display: block;
 }

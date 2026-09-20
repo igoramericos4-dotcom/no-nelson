@@ -127,6 +127,16 @@
     });
   }
 
+  // ---------- Phone: only 9 digits ----------
+  const telefoneInput = document.getElementById('telefone');
+  const phoneError = document.getElementById('phone-error');
+  if (telefoneInput) {
+    telefoneInput.addEventListener('input', function () {
+      this.value = this.value.replace(/\D/g, '').slice(0, 9);
+      if (phoneError) phoneError.classList.remove('visible');
+    });
+  }
+
   // ---------- Appointment form → WhatsApp ----------
   const form = document.getElementById('agendamento-form');
   const modal = document.getElementById('confirm-modal');
@@ -135,16 +145,25 @@
       e.preventDefault();
 
       const nome = form.nome.value.trim();
-      const telefone = form.telefone.value.trim();
+      const pais = (form.pais && form.pais.value) ? form.pais.value : '+258';
+      const telefoneDigits = form.telefone.value.trim().replace(/\D/g, '');
       const servico = form.servico.value;
       const data = form.data.value;
       const horario = form.horario.value;
       const obs = form.observacoes.value.trim();
 
-      if (!nome || !telefone || !servico || !data || !horario) {
+      if (!nome || !telefoneDigits || !servico || !data || !horario) {
         alert('Por favor, preencha todos os campos obrigatórios.');
         return;
       }
+
+      if (telefoneDigits.length !== 9) {
+        if (phoneError) phoneError.classList.add('visible');
+        form.telefone.focus();
+        return;
+      }
+
+      const telefoneCompleto = pais + ' ' + telefoneDigits;
 
       // Format date
       let dataFormatada = data;
@@ -160,7 +179,7 @@
 
       let mensagem = `*Agendamento — NELSONBARBERSHOPPMZ*%0A%0A`;
       mensagem += `*Nome:* ${encodeURIComponent(nome)}%0A`;
-      mensagem += `*Telefone:* ${encodeURIComponent(telefone)}%0A`;
+      mensagem += `*Telefone:* ${encodeURIComponent(telefoneCompleto)}%0A`;
       mensagem += `*Serviço:* ${encodeURIComponent(servico)}%0A`;
       mensagem += `*Data:* ${encodeURIComponent(dataFormatada)}%0A`;
       mensagem += `*Horário:* ${encodeURIComponent(horario)}%0A`;
@@ -179,6 +198,7 @@
       }
 
       form.reset();
+      if (form.pais) form.pais.value = '+258';
 
       // Reset custom service select UI
       if (customSelect) {
