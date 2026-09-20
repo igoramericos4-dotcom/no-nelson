@@ -1,4 +1,4 @@
-/* NELSONBARBERSHOPPMZ — Main JS */
+/* Nonelsonbarbershoppmz — Main JS */
 
 (function () {
   'use strict';
@@ -177,7 +177,7 @@
         });
       } catch (_) {}
 
-      let mensagem = `*Agendamento — NELSONBARBERSHOPPMZ*%0A%0A`;
+      let mensagem = `*Agendamento — Nonelsonbarbershoppmz*%0A%0A`;
       mensagem += `*Nome:* ${encodeURIComponent(nome)}%0A`;
       mensagem += `*Telefone:* ${encodeURIComponent(telefoneCompleto)}%0A`;
       mensagem += `*Serviço:* ${encodeURIComponent(servico)}%0A`;
