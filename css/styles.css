@@ -2010,3 +2010,12 @@ h1, h2,
     grid-template-columns: 1fr;
   }
 }
+
+/* Brand logo text fit */
+.logo-text {
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.logo-text span {
+  letter-spacing: 0.14em;
+}
