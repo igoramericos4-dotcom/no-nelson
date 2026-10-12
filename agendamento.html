@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agendar Corte | No Nelson Barbershop — Quartas-feiras Matola-Rio</title>
-  <meta name="description" content="Marque o seu corte na No Nelson Barbershop. Agendamentos às quartas-feiras com confirmação de 200 Mts. Atendimento com o Barbeiro Nelson em Matola-Rio, Maputo.">
-  <meta name="keywords" content="agendar corte Matola-Rio, marcação barbearia Maputo, No Nelson Barbershop agendamento, quarta-feira barbearia">
+  <title>Agendar Corte | No Nelson Barbershop — Matola-Rio</title>
+  <meta name="description" content="Marque o seu corte na No Nelson Barbershop. Agendamento online com confirmação de 200 Mts. Atendimento com o Barbeiro Nelson em Matola-Rio, Maputo.">
+  <meta name="keywords" content="agendar corte Matola-Rio, marcação barbearia Maputo, No Nelson Barbershop agendamento">
   <link rel="canonical" href="agendamento.html">
   <link rel="icon" type="image/png" href="assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -181,11 +181,11 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="data">Data (só quartas-feiras) *</label>
+              <label for="data">Data *</label>
               <select id="data" name="data" required>
-                <option value="" disabled selected>Selecione uma quarta-feira</option>
+                <option value="" disabled selected>Selecione a data</option>
               </select>
-              <p class="field-hint">As marcações são apenas às quartas-feiras.</p>
+              <p class="field-hint">Escolha o dia e horário pretendidos.</p>
             </div>
             <div class="form-group">
               <label for="horario">Horário *</label>
@@ -223,7 +223,7 @@
           </div>
           <div class="payment-step reveal" id="payment-step">
             <h3 class="pay-step-title" data-i18n="pay_title">Pagamento de confirmação — 200 Mts</h3>
-            <p class="pay-step-intro" data-i18n="pay_intro">As marcações de quarta-feira só são enviadas após o pagamento de 200 Mts. Pague e indique a referência.</p>
+            <p class="pay-step-intro" data-i18n="pay_intro">As marcações só são enviadas após o pagamento de 200 Mts. Pague e cole a mensagem de confirmação.</p>
 
             <div class="payment-grid pay-step-grid">
               <div class="payment-card">
@@ -256,10 +256,10 @@
             </div>
 
             <div class="form-group full">
-              <label for="ref_pagamento">Código / ID da confirmação *</label>
-              <input type="text" id="ref_pagamento" name="ref_pagamento" required inputmode="numeric" autocomplete="off" maxlength="20" placeholder="Cole o código da SMS de confirmação" disabled>
-              <p class="field-hint" id="ref-hint">Primeiro selecione a plataforma. Depois cole só o código numérico da confirmação.</p>
-              <p class="phone-error" id="ref-error" role="alert">Código inválido para a plataforma escolhida.</p>
+              <label for="ref_pagamento">Mensagem de confirmação do pagamento *</label>
+              <textarea id="ref_pagamento" name="ref_pagamento" required rows="5" maxlength="800" placeholder="Cole aqui a mensagem completa do SMS ou comprovativo (M-Pesa, e-Mola ou BIM)" disabled></textarea>
+              <p class="field-hint" id="ref-hint">Primeiro selecione a plataforma. Depois cole a <strong>mensagem inteira</strong> de confirmação — não apenas números.</p>
+              <p class="phone-error" id="ref-error" role="alert">Cole a mensagem completa de confirmação (não apenas números aleatórios).</p>
             </div>
 
             <label class="pay-check">
@@ -294,9 +294,9 @@
           </div>
           <div class="wed-notice reveal">
             <p class="wn-badge">Aviso importante</p>
-            <h3>Marcações de <span>Quarta-feira</span></h3>
+            <h3>Confirmação de <span>marcação</span></h3>
             <ul>
-              <li>Marcações de <span class="wn-highlight">quarta-feira</span> confirmadas com pagamento de <span class="wn-highlight">200 Mts</span>.</li>
+              <li>Marcações confirmadas com pagamento de <span class="wn-highlight">200 Mts</span>.</li>
               <li>Sem presença: <span class="wn-highlight">valor não reembolsado</span>.</li>
               <li>Tolerância de atraso: <span class="wn-highlight">10 minutos</span>.</li>
             </ul>

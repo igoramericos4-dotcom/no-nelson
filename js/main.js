@@ -16,7 +16,7 @@
         btn_book_now: 'Agendar Agora',
         btn_send_booking: 'Enviar após pagamento (WhatsApp)',
         pay_title: 'Pagamento de confirmação — 200 Mts',
-        pay_intro: 'As marcações de quarta-feira só são enviadas após o pagamento de 200 Mts. Pague e indique a referência.',
+        pay_intro: 'As marcações só são enviadas após o pagamento de 200 Mts. Pague e cole a mensagem de confirmação.',
         pay_ref_label: 'Referência / ID da transação *',
         pay_ref_hint: 'Obrigatório. O Nelson confirma a marcação após verificar o pagamento.',
         pay_check: 'Confirmo que já paguei 200 Mts e que, em caso de falta, o valor não será reembolsado.',
@@ -37,7 +37,7 @@
         btn_book_now: 'Book Now',
         btn_send_booking: 'Send after payment (WhatsApp)',
         pay_title: 'Confirmation payment — 200 Mts',
-        pay_intro: 'Wednesday bookings are only sent after the 200 Mts payment. Pay and enter the reference.',
+        pay_intro: 'Bookings are only sent after the 200 Mts payment. Pay and paste the confirmation message.',
         pay_ref_label: 'Transaction reference / ID *',
         pay_ref_hint: 'Required. Nelson confirms the booking after verifying payment.',
         pay_check: 'I confirm I have paid 200 Mts and that no-shows are non-refundable.',
@@ -246,24 +246,15 @@
   }
 
 
-  // ---------- Wednesday-only dates (next 2 years) ----------
+  // ---------- Available dates (all days, next 6 months) ----------
   const dataSelect = document.getElementById('data');
   if (dataSelect && dataSelect.tagName === 'SELECT') {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Start from next Wednesday (or today if Wednesday and still early — use today if Wed)
     let d = new Date(today);
-    const day = d.getDay(); // 0 Sun ... 3 Wed
-    const daysUntilWed = (3 - day + 7) % 7;
-    if (daysUntilWed === 0) {
-      // today is Wednesday — keep today
-    } else {
-      d.setDate(d.getDate() + daysUntilWed);
-    }
-
     const end = new Date(today);
-    end.setFullYear(end.getFullYear() + 2);
+    end.setMonth(end.getMonth() + 6);
 
     const formatter = new Intl.DateTimeFormat('pt-MZ', {
       weekday: 'long',
@@ -273,24 +264,22 @@
     });
 
     while (d <= end) {
-      if (d.getDay() === 3) {
-        const yyyy = d.getFullYear();
-        const mm = String(d.getMonth() + 1).padStart(2, '0');
-        const dd = String(d.getDate()).padStart(2, '0');
-        const value = `${yyyy}-${mm}-${dd}`;
-        const opt = document.createElement('option');
-        opt.value = value;
-        let label = formatter.format(d);
-        label = label.charAt(0).toUpperCase() + label.slice(1);
-        opt.textContent = label;
-        dataSelect.appendChild(opt);
-      }
-      d.setDate(d.getDate() + 7);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const value = `${yyyy}-${mm}-${dd}`;
+      const opt = document.createElement('option');
+      opt.value = value;
+      let label = formatter.format(d);
+      label = label.charAt(0).toUpperCase() + label.slice(1);
+      opt.textContent = label;
+      dataSelect.appendChild(opt);
+      d.setDate(d.getDate() + 1);
     }
   }
 
 
-  // ---------- Payment platform + reference rules ----------
+  // ---------- Payment platform + full confirmation message ----------
   const plataformaEl = document.getElementById('plataforma');
   const refPagEl = document.getElementById('ref_pagamento');
   const refHint = document.getElementById('ref-hint');
@@ -298,19 +287,16 @@
 
   const payRules = {
     mpesa: {
-      min: 8, max: 20,
-      placeholder: 'Ex: 123456789012 (código M-Pesa)',
-      hint: 'M-Pesa: cole só os números do SMS de confirmação (8 a 20 dígitos).'
+      placeholder: 'Cole aqui a mensagem completa do SMS M-Pesa de confirmação…',
+      hint: 'M-Pesa: cole a mensagem inteira do SMS (não só o número). O Nelson usa-a para confirmar o pagamento.'
     },
     emola: {
-      min: 8, max: 20,
-      placeholder: 'Ex: 123456789012 (código e-Mola)',
-      hint: 'e-Mola: cole só os números do SMS de confirmação (8 a 20 dígitos).'
+      placeholder: 'Cole aqui a mensagem completa do SMS e-Mola de confirmação…',
+      hint: 'e-Mola: cole a mensagem inteira do SMS (não só o número). O Nelson usa-a para confirmar o pagamento.'
     },
     bim: {
-      min: 6, max: 20,
-      placeholder: 'Ex: número da transferência BIM',
-      hint: 'BIM: cole o código/nº da transferência (6 a 20 dígitos).'
+      placeholder: 'Cole aqui o comprovativo / mensagem completa da transferência BIM…',
+      hint: 'BIM: cole o texto completo do comprovativo ou SMS. O Nelson usa-o para confirmar o pagamento.'
     }
   };
 
@@ -322,15 +308,55 @@
       refPagEl.disabled = true;
       refPagEl.value = '';
       refPagEl.placeholder = 'Selecione primeiro a plataforma';
-      if (refHint) refHint.textContent = 'Primeiro selecione a plataforma. Depois cole só o código numérico da confirmação.';
+      if (refHint) refHint.innerHTML = 'Primeiro selecione a plataforma. Depois cole a <strong>mensagem inteira</strong> de confirmação — não apenas números.';
       if (refErrorEl) refErrorEl.classList.remove('visible');
       return;
     }
     refPagEl.disabled = false;
     refPagEl.placeholder = rule.placeholder;
-    refPagEl.maxLength = rule.max;
     if (refHint) refHint.textContent = rule.hint;
     if (refErrorEl) refErrorEl.classList.remove('visible');
+  }
+
+  /**
+   * Valida se o texto parece uma mensagem real de confirmação
+   * (não apenas números aleatórios).
+   */
+  function validatePaymentMessage(text, plataforma) {
+    const t = String(text || '').trim();
+    if (t.length < 25) {
+      return { ok: false, error: 'A mensagem é demasiado curta. Cole a confirmação completa do SMS ou comprovativo.' };
+    }
+    if (t.length > 800) {
+      return { ok: false, error: 'Mensagem demasiado longa (máx. 800 caracteres).' };
+    }
+    // Rejeitar só dígitos / quase só dígitos
+    const digits = (t.match(/\d/g) || []).length;
+    const letters = (t.match(/[A-Za-zÀ-ÿ]/g) || []).length;
+    if (letters < 8) {
+      return { ok: false, error: 'Não aceite apenas números. Cole a mensagem completa de confirmação (com texto).' };
+    }
+    // Deve parecer comprovativo: palavras-chave comuns OU estrutura com montante
+    const lower = t.toLowerCase();
+    const keywords = [
+      'mpesa', 'm-pesa', 'emola', 'e-mola', 'transfer', 'transferên', 'transferen',
+      'confirm', 'receb', 'enviad', 'pagamento', 'paga', 'mts', 'mt ', 'metical',
+      'bim', 'millennium', 'saldo', 'id da trans', 'transaction', 'comprov'
+    ];
+    const hasKeyword = keywords.some(function (k) { return lower.indexOf(k) !== -1; });
+    const hasAmount = /\b200\b/.test(t) || /\b200[.,]00\b/.test(t) || /mts?\s*200\b/i.test(t) || /\b200\s*mts?\b/i.test(t);
+    // Pelo menos palavra-chave de pagamento OU menção a 200 (valor da marcação)
+    if (!hasKeyword && !hasAmount) {
+      return {
+        ok: false,
+        error: 'A mensagem não parece um comprovativo de pagamento. Cole o SMS/comprovativo real (M-Pesa, e-Mola ou BIM).'
+      };
+    }
+    // Plataforma coerente (aviso suave: se escolheram mpesa, ideal ter mpesa no texto)
+    if (plataforma === 'mpesa' && !/mpesa|m-pesa|vodacom/i.test(t) && hasKeyword && !hasAmount) {
+      // ainda permitir se tiver 200 e texto suficiente
+    }
+    return { ok: true };
   }
 
   if (plataformaEl) {
@@ -340,7 +366,6 @@
 
   if (refPagEl) {
     refPagEl.addEventListener('input', function () {
-      this.value = this.value.replace(/\D/g, '');
       if (refErrorEl) refErrorEl.classList.remove('visible');
     });
   }
@@ -365,17 +390,9 @@
         return;
       }
 
-      // Ensure selected date is a Wednesday
-      try {
-        const check = new Date(data + 'T12:00:00');
-        if (check.getDay() !== 3) {
-          alert(I18N.t('alert_wednesday'));
-          return;
-        }
-      } catch (_) {}
 
       const plataforma = (form.plataforma && form.plataforma.value) ? form.plataforma.value : '';
-      const refPag = (form.ref_pagamento && form.ref_pagamento.value) ? form.ref_pagamento.value.trim().replace(/\s+/g, '') : '';
+      const refPag = (form.ref_pagamento && form.ref_pagamento.value) ? form.ref_pagamento.value.trim() : '';
       const pagou = form.pagou && form.pagou.checked;
       const refError = document.getElementById('ref-error');
 
@@ -385,19 +402,13 @@
         return;
       }
 
-      // Regras por plataforma: só números (código da confirmação)
-      // M-Pesa / e-Mola: 8–20 dígitos | BIM: 6–20 dígitos
-      const rules = {
-        mpesa: { min: 8, max: 20, label: 'M-Pesa' },
-        emola: { min: 8, max: 20, label: 'e-Mola' },
-        bim:   { min: 6, max: 20, label: 'Millennium BIM' }
-      };
-      const rule = rules[plataforma];
-      const digitsOnly = /^[0-9]+$/.test(refPag);
-
-      if (!rule || !digitsOnly || refPag.length < rule.min || refPag.length > rule.max) {
-        if (refError) refError.classList.add('visible');
-        alert('Cole o código numérico da confirmação ' + (rule ? rule.label : '') + ' (' + (rule ? rule.min + '–' + rule.max + ' dígitos' : 'inválido') + ').');
+      const msgCheck = validatePaymentMessage(refPag, plataforma);
+      if (!msgCheck.ok) {
+        if (refError) {
+          refError.textContent = msgCheck.error;
+          refError.classList.add('visible');
+        }
+        alert(msgCheck.error);
         if (form.ref_pagamento) form.ref_pagamento.focus();
         return;
       }
@@ -441,7 +452,11 @@
       const platLabel = { mpesa: 'M-Pesa', emola: 'e-Mola', bim: 'Millennium BIM' }[plataforma] || plataforma;
       mensagem += `*Pagamento confirmação:* 200 Mts%0A`;
       mensagem += `*Plataforma:* ${encodeURIComponent(platLabel)}%0A`;
-      mensagem += `*Código confirmação:* ${encodeURIComponent(refPag)}%0A`;
+      mensagem += `*Mensagem de confirmação do pagamento:*%0A`;
+      refPag.split(/\r?\n/).forEach(function (line) {
+        if (line.trim()) mensagem += encodeURIComponent(line.trim()) + '%0A';
+      });
+
       mensagem += `*Cliente declara:* pagamento efetuado (não reembolsável se faltar)%0A`;
       mensagem += `%0A_Atendimento exclusivo com o Barbeiro Nelson. Confirmar pagamento antes de reservar._`;
 
@@ -456,6 +471,7 @@
 
       form.reset();
       if (form.pais) form.pais.value = '+258';
+      if (typeof applyPayPlatform === 'function') applyPayPlatform();
 
       // Reset custom service select UI
       if (customSelect) {
