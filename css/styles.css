@@ -1114,6 +1114,15 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.5rem); }
   justify-content: center;
 }
 
+.modal p.modal-note {
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.modal-calendar {
+  margin-bottom: 1.5rem;
+}
+
 /* ---------- Location ---------- */
 .location-page {
   padding-top: 7rem;

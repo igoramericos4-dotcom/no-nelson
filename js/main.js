@@ -370,6 +370,97 @@
     });
   }
 
+  // ---------- Lembrete no calendário (.ics + Google Calendar) ----------
+  // Maputo está em UTC+2 o ano todo (sem horário de verão).
+  const CAL = {
+    tzOffsetHours: 2,
+    durationMin: 30,
+    place: 'Rua da Mozal, Matola-Rio, Boane, Maputo, Moçambique',
+    alarmMinutes: 120
+  };
+  let lastBooking = null;
+
+  function calPad(n) { return String(n).padStart(2, '0'); }
+
+  function calStamp(date) {
+    return date.getUTCFullYear() + calPad(date.getUTCMonth() + 1) + calPad(date.getUTCDate()) +
+      'T' + calPad(date.getUTCHours()) + calPad(date.getUTCMinutes()) + calPad(date.getUTCSeconds()) + 'Z';
+  }
+
+  function calEscape(text) {
+    return String(text).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+  }
+
+  function calDetails(b) {
+    const start = new Date(Date.UTC(
+      Number(b.data.slice(0, 4)), Number(b.data.slice(5, 7)) - 1, Number(b.data.slice(8, 10)),
+      Number(b.horario.slice(0, 2)) - CAL.tzOffsetHours, Number(b.horario.slice(3, 5))
+    ));
+    const end = new Date(start.getTime() + CAL.durationMin * 60000);
+    const servicoNome = b.servico.split(' — ')[0];
+    return {
+      start: start,
+      end: end,
+      title: servicoNome + ' — No Nelson Barbershop',
+      description: 'Marcação com o Barbeiro Nelson. Fica confirmada depois de o Nelson verificar o pagamento de 200 Mts. Avise o Nelson quando chegar. Tolerância de atraso: 10 minutos.'
+    };
+  }
+
+  function updateCalendarLinks() {
+    const googleLink = document.getElementById('add-to-google');
+    if (!googleLink || !lastBooking) return;
+    const c = calDetails(lastBooking);
+    googleLink.href = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+      '&text=' + encodeURIComponent(c.title) +
+      '&dates=' + calStamp(c.start) + '/' + calStamp(c.end) +
+      '&details=' + encodeURIComponent(c.description) +
+      '&location=' + encodeURIComponent(CAL.place) +
+      '&ctz=Africa/Maputo';
+  }
+
+  function downloadCalendarFile(b) {
+    const c = calDetails(b);
+    const lines = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//No Nelson Barbershop//Marcacao//PT',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      'UID:' + Date.now() + '-' + calStamp(c.start) + '@no-nelson-barbershop',
+      'DTSTAMP:' + calStamp(new Date()),
+      'DTSTART:' + calStamp(c.start),
+      'DTEND:' + calStamp(c.end),
+      'SUMMARY:' + calEscape(c.title),
+      'DESCRIPTION:' + calEscape(c.description),
+      'LOCATION:' + calEscape(CAL.place),
+      'STATUS:TENTATIVE',
+      'BEGIN:VALARM',
+      'TRIGGER:-PT' + CAL.alarmMinutes + 'M',
+      'ACTION:DISPLAY',
+      'DESCRIPTION:' + calEscape('A sua marcação na No Nelson Barbershop é daqui a 2 horas.'),
+      'END:VALARM',
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ];
+    const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'marcacao-no-nelson.ics';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+  }
+
+  const calendarBtn = document.getElementById('add-to-calendar');
+  if (calendarBtn) {
+    calendarBtn.addEventListener('click', function () {
+      if (lastBooking) downloadCalendarFile(lastBooking);
+    });
+  }
+
   // ---------- Appointment form → WhatsApp ----------
   const form = document.getElementById('agendamento-form');
   const modal = document.getElementById('confirm-modal');
@@ -462,6 +553,10 @@
 
       const waUrl = `https://wa.me/258845880006?text=${mensagem}`;
       window.open(waUrl, '_blank');
+
+      // Guardar a marcação para o lembrete de calendário (antes do form.reset())
+      lastBooking = { servico: servico, data: data, horario: horario };
+      updateCalendarLinks();
 
       // Show confirmation modal
       if (modal) {
