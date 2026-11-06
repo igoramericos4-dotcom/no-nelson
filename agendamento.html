@@ -6,7 +6,19 @@
   <title>Agendar Corte | No Nelson Barbershop — Matola-Rio</title>
   <meta name="description" content="Marque o seu corte na No Nelson Barbershop. Agendamento online com confirmação de 200 Mts. Atendimento com o Barbeiro Nelson em Matola-Rio, Maputo.">
   <meta name="keywords" content="agendar corte Matola-Rio, marcação barbearia Maputo, No Nelson Barbershop agendamento">
-  <link rel="canonical" href="agendamento.html">
+  <link rel="canonical" href="https://no-nelson.onrender.com/agendamento.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="No Nelson Barbershop">
+  <meta property="og:locale" content="pt_MZ">
+  <meta property="og:url" content="https://no-nelson.onrender.com/agendamento.html">
+  <meta property="og:title" content="Agendar Corte | No Nelson Barbershop — Matola-Rio">
+  <meta property="og:description" content="Marque o seu corte na No Nelson Barbershop. Agendamento online com confirmação de 200 Mts. Atendimento com o Barbeiro Nelson em Matola-Rio, Maputo.">
+  <meta property="og:image" content="https://no-nelson.onrender.com/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Logótipo da No Nelson Barbershop">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://no-nelson.onrender.com/assets/og-image.png">
   <link rel="icon" type="image/png" href="assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -74,6 +86,16 @@
         <div class="form-alert reveal">
           <strong style="color:var(--red-bright); display:block; margin-bottom:0.4rem; font-family:var(--font-title); letter-spacing:0.08em; text-transform:uppercase; font-size:0.8rem;">Atenção</strong>
           Os agendamentos pelo site garantem atendimento prioritário no horário selecionado, logo após a conclusão do corte em andamento.
+        </div>
+
+        <div class="how-to reveal">
+          <p class="how-to-title">Como marcar</p>
+          <ol>
+            <li>Escolha o serviço, a data e o horário. Para o próprio dia, marque logo de manhã, até às 12h00.</li>
+            <li>Pague pelo M-Pesa, e-Mola ou BIM e cole a mensagem de confirmação no formulário.</li>
+            <li>Toque em enviar e, se quiser, guarde um lembrete no calendário.</li>
+            <li>Toque em &ldquo;Enviar no WhatsApp&rdquo; e aguarde a confirmação do Nelson.</li>
+          </ol>
         </div>
 
         <form id="agendamento-form" class="reveal" novalidate>
@@ -185,35 +207,12 @@
               <select id="data" name="data" required>
                 <option value="" disabled selected>Selecione a data</option>
               </select>
-              <p class="field-hint">Escolha o dia e horário pretendidos.</p>
+              <p class="field-hint">Para o próprio dia, só é possível marcar até às 12h00. Depois dessa hora, escolha outro dia.</p>
             </div>
             <div class="form-group">
               <label for="horario">Horário *</label>
               <select id="horario" name="horario" required>
-                <option value="" disabled selected>Selecione</option>
-                <option value="09:00">09:00</option>
-                <option value="09:30">09:30</option>
-                <option value="10:00">10:00</option>
-                <option value="10:30">10:30</option>
-                <option value="11:00">11:00</option>
-                <option value="11:30">11:30</option>
-                <option value="12:00">12:00</option>
-                <option value="12:30">12:30</option>
-                <option value="13:00">13:00</option>
-                <option value="13:30">13:30</option>
-                <option value="14:00">14:00</option>
-                <option value="14:30">14:30</option>
-                <option value="15:00">15:00</option>
-                <option value="15:30">15:30</option>
-                <option value="16:00">16:00</option>
-                <option value="16:30">16:30</option>
-                <option value="17:00">17:00</option>
-                <option value="17:30">17:30</option>
-                <option value="18:00">18:00</option>
-                <option value="18:30">18:30</option>
-                <option value="19:00">19:00</option>
-                <option value="19:30">19:30</option>
-                <option value="20:00">20:00</option>
+                <option value="" disabled selected>Selecione a data primeiro</option>
               </select>
             </div>
             <div class="form-group full">
@@ -292,7 +291,7 @@
               </div>
             </div>
           </div>
-          <p class="booking-note reveal">Marcações confirmadas com pagamento de 200 Mts · Sem presença, o valor não é reembolsado · Tolerância de atraso: 10 minutos.</p>
+          <p class="booking-note reveal">Marque logo de manhã: marcações para o próprio dia até às 12h00 · Marcações confirmadas com pagamento de 200 Mts · Sem presença, o valor não é reembolsado · Tolerância de atraso: 10 minutos.</p>
         </div>
       </div>
     </section>
@@ -306,7 +305,7 @@
 
       <div class="modal-step">
         <p class="modal-step-title">1. Guarde um lembrete <span>(opcional)</span></p>
-        <p class="modal-step-hint">O alarme toca 2 horas antes da marcação.</p>
+        <p class="modal-step-hint">O calendário avisa-o antes da marcação. Pode ajustar a hora do alarme no próprio calendário.</p>
         <div class="modal-actions modal-calendar">
           <button type="button" class="btn btn-sm" id="add-to-calendar">Guardar no calendário</button>
           <a href="#" class="btn btn-outline btn-sm" id="add-to-google" target="_blank" rel="noopener">Google Calendar</a>

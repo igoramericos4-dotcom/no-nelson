@@ -21,7 +21,6 @@
         pay_ref_hint: 'Obrigatório. O Nelson confirma a marcação após verificar o pagamento.',
         pay_check: 'Confirmo que já paguei 200 Mts e que, em caso de falta, o valor não será reembolsado.',
         alert_required: 'Por favor, preencha todos os campos obrigatórios.',
-        alert_wednesday: 'As marcações são apenas às quartas-feiras. Selecione uma quarta-feira.',
         alert_ref: 'Indique a referência / ID do pagamento de 200 Mts.',
         alert_paid: 'Confirme o pagamento de 200 Mts antes de enviar.',
         footer_nav: 'Navegação',
@@ -42,7 +41,6 @@
         pay_ref_hint: 'Required. Nelson confirms the booking after verifying payment.',
         pay_check: 'I confirm I have paid 200 Mts and that no-shows are non-refundable.',
         alert_required: 'Please fill in all required fields.',
-        alert_wednesday: 'Bookings are only on Wednesdays. Please select a Wednesday.',
         alert_ref: 'Enter the 200 Mts payment reference / ID.',
         alert_paid: 'Confirm the 200 Mts payment before sending.',
         footer_nav: 'Navigation',
@@ -246,38 +244,94 @@
   }
 
 
-  // ---------- Available dates (all days, next 6 months) ----------
-  const dataSelect = document.getElementById('data');
-  if (dataSelect && dataSelect.tagName === 'SELECT') {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  // ---------- Datas e horários disponíveis (horário de Maputo, UTC+2) ----------
+  // 0 = domingo ... 6 = sábado; [abre, fecha] em horas; null = fechado (igual ao rodapé do site)
+  const OPENING_HOURS = { 0: [14, 20], 1: null, 2: [9, 20], 3: [9, 20], 4: [9, 20], 5: [8, 19], 6: [7, 20] };
+  const SLOT_MINUTES = 30;        // intervalo entre horários; o último começa 30 min antes de fechar
+  const BOOKING_NOTICE_MIN = 30;  // margem mínima para marcações no próprio dia (pagar e enviar)
+  const SAME_DAY_CUTOFF_HOUR = 12; // marcações para o próprio dia só até às 12h00 (hora de Maputo)
 
-    let d = new Date(today);
-    const end = new Date(today);
-    end.setMonth(end.getMonth() + 6);
+  const dataSelect = document.getElementById('data');
+  const horarioSelect = document.getElementById('horario');
+
+  function pad2(n) { return String(n).padStart(2, '0'); }
+
+  function maputoNow() { return new Date(Date.now() + 2 * 3600 * 1000); } // ler com getUTC*
+
+  function slotsForDate(dateStr) {
+    if (!dateStr) return [];
+    const parts = dateStr.split('-').map(Number);
+    const weekday = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2])).getUTCDay();
+    const hours = OPENING_HOURS[weekday];
+    if (!hours) return [];
+    const now = maputoNow();
+    const todayStr = now.getUTCFullYear() + '-' + pad2(now.getUTCMonth() + 1) + '-' + pad2(now.getUTCDate());
+    if (dateStr < todayStr) return [];
+    // Depois das 12h00 já não se marca para hoje (evita marcar para daqui a minutos)
+    if (dateStr === todayStr && now.getUTCHours() >= SAME_DAY_CUTOFF_HOUR) return [];
+    const earliest = dateStr === todayStr
+      ? now.getUTCHours() * 60 + now.getUTCMinutes() + BOOKING_NOTICE_MIN
+      : 0;
+    const slots = [];
+    for (let m = hours[0] * 60; m <= hours[1] * 60 - SLOT_MINUTES; m += SLOT_MINUTES) {
+      if (m >= earliest) slots.push(pad2(Math.floor(m / 60)) + ':' + pad2(m % 60));
+    }
+    return slots;
+  }
+
+  function renderSlots() {
+    if (!horarioSelect || !dataSelect) return;
+    const previous = horarioSelect.value;
+    const slots = slotsForDate(dataSelect.value);
+    horarioSelect.innerHTML = '';
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    placeholder.textContent = dataSelect.value ? 'Selecione' : 'Selecione a data primeiro';
+    horarioSelect.appendChild(placeholder);
+    slots.forEach(function (t) {
+      const o = document.createElement('option');
+      o.value = t;
+      o.textContent = t;
+      horarioSelect.appendChild(o);
+    });
+    if (slots.indexOf(previous) !== -1) horarioSelect.value = previous;
+    horarioSelect.disabled = !dataSelect.value;
+  }
+
+  if (dataSelect && dataSelect.tagName === 'SELECT') {
+    const now = maputoNow();
+    let day = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const endDate = new Date(day);
+    endDate.setUTCMonth(endDate.getUTCMonth() + 6);
+    const end = endDate.getTime();
 
     const formatter = new Intl.DateTimeFormat('pt-MZ', {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
-      year: 'numeric'
+      year: 'numeric',
+      timeZone: 'UTC'
     });
 
-    while (d <= end) {
-      const yyyy = d.getFullYear();
-      const mm = String(d.getMonth() + 1).padStart(2, '0');
-      const dd = String(d.getDate()).padStart(2, '0');
-      const value = `${yyyy}-${mm}-${dd}`;
-      const opt = document.createElement('option');
-      opt.value = value;
-      let label = formatter.format(d);
-      label = label.charAt(0).toUpperCase() + label.slice(1);
-      opt.textContent = label;
-      dataSelect.appendChild(opt);
-      d.setDate(d.getDate() + 1);
+    while (day <= end) {
+      const d = new Date(day);
+      const value = d.getUTCFullYear() + '-' + pad2(d.getUTCMonth() + 1) + '-' + pad2(d.getUTCDate());
+      // só aparecem dias em que a barbearia abre (e, hoje, só se ainda houver horários)
+      if (slotsForDate(value).length > 0) {
+        const opt = document.createElement('option');
+        opt.value = value;
+        let label = formatter.format(d);
+        label = label.charAt(0).toUpperCase() + label.slice(1);
+        opt.textContent = label;
+        dataSelect.appendChild(opt);
+      }
+      day += 86400000;
     }
+    dataSelect.addEventListener('change', renderSlots);
   }
-
+  renderSlots();
 
   // ---------- Payment platform + full confirmation message ----------
   const plataformaEl = document.getElementById('plataforma');
@@ -506,6 +560,13 @@
         return;
       }
 
+      // O horário escolhido pode ter passado entre a abertura da página e o envio
+      if (slotsForDate(data).indexOf(horario) === -1) {
+        alert('Esse horário já não está disponível. Escolha outro horário.');
+        renderSlots();
+        return;
+      }
+
 
       const plataforma = (form.plataforma && form.plataforma.value) ? form.plataforma.value : '';
       const refPag = (form.ref_pagamento && form.ref_pagamento.value) ? form.ref_pagamento.value.trim() : '';
@@ -579,6 +640,7 @@
       // Limpa o formulário (só depois de a marcação ser enviada no WhatsApp)
       function resetBookingForm() {
         form.reset();
+        renderSlots();
         if (form.pais) form.pais.value = '+258';
         if (typeof applyPayPlatform === 'function') applyPayPlatform();
 

@@ -2067,3 +2067,42 @@ h1, h2,
 .logo-text span {
   letter-spacing: 0.14em;
 }
+
+/* Como marcar */
+.how-to {
+  margin-bottom: 1.5rem;
+  padding: 1.2rem 1.4rem;
+  background: var(--gray-dark);
+  border: 1px solid var(--border);
+}
+
+.how-to-title {
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 0.8rem;
+}
+
+.how-to ol {
+  margin: 0;
+  padding-left: 1.4rem;
+  list-style: decimal;
+}
+
+.how-to li::marker {
+  color: var(--red-bright);
+  font-weight: 600;
+}
+
+.how-to li {
+  color: var(--gray-soft);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 0.4rem;
+}
+
+.how-to li:last-child {
+  margin-bottom: 0;
+}
