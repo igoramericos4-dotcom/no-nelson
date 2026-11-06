@@ -454,6 +454,31 @@
     setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
   }
 
+  // Estado do modal: antes de enviar ("Quase lá!") e depois de enviar
+  function setModalState(sent) {
+    const title = document.getElementById('modal-title');
+    const lead = document.getElementById('modal-lead');
+    const sendBtn = document.getElementById('send-whatsapp');
+    if (title) title.textContent = sent ? 'Marcação enviada!' : 'Quase lá!';
+    if (lead) lead.textContent = sent
+      ? 'Aguarde a confirmação do Nelson no WhatsApp.'
+      : 'A sua marcação só segue para o Nelson quando a enviar no WhatsApp (passo 2).';
+    if (sendBtn) sendBtn.textContent = sent ? 'Abrir o WhatsApp novamente' : 'Enviar no WhatsApp';
+  }
+
+  const sendWhatsappBtn = document.getElementById('send-whatsapp');
+  if (sendWhatsappBtn) {
+    sendWhatsappBtn.addEventListener('click', function () {
+      if (!lastBooking) return;
+      window.open(lastBooking.waUrl, '_blank');
+      if (typeof lastBooking.reset === 'function') {
+        lastBooking.reset();
+        lastBooking.reset = null;
+      }
+      setModalState(true);
+    });
+  }
+
   const calendarBtn = document.getElementById('add-to-calendar');
   if (calendarBtn) {
     calendarBtn.addEventListener('click', function () {
@@ -531,51 +556,51 @@
         });
       } catch (_) {}
 
-      let mensagem = `*Agendamento — No Nelson Barbershop*%0A%0A`;
-      mensagem += `*Nome:* ${encodeURIComponent(nome)}%0A`;
-      mensagem += `*Telefone:* ${encodeURIComponent(telefoneCompleto)}%0A`;
-      mensagem += `*Serviço:* ${encodeURIComponent(servico)}%0A`;
-      mensagem += `*Data:* ${encodeURIComponent(dataFormatada)}%0A`;
-      mensagem += `*Horário:* ${encodeURIComponent(horario)}%0A`;
-      if (obs) {
-        mensagem += `*Observações:* ${encodeURIComponent(obs)}%0A`;
-      }
       const platLabel = { mpesa: 'M-Pesa', emola: 'e-Mola', bim: 'Millennium BIM' }[plataforma] || plataforma;
-      mensagem += `*Pagamento confirmação:* 200 Mts%0A`;
-      mensagem += `*Plataforma:* ${encodeURIComponent(platLabel)}%0A`;
-      mensagem += `*Mensagem de confirmação do pagamento:*%0A`;
+      const enc = encodeURIComponent;
+
+      // Mensagem organizada em 3 blocos: cliente, marcação e pagamento
+      let mensagem = `*Nova marcação — No Nelson Barbershop*%0A%0A`;
+      mensagem += `*Cliente:* ${enc(nome)}%0A`;
+      mensagem += `*Telefone:* ${enc(telefoneCompleto)}%0A%0A`;
+      mensagem += `*Serviço:* ${enc(servico)}%0A`;
+      mensagem += `*Data:* ${enc(dataFormatada)}%0A`;
+      mensagem += `*Horário:* ${enc(horario)}%0A`;
+      if (obs) {
+        mensagem += `*Observações:* ${enc(obs)}%0A`;
+      }
+      mensagem += `%0A*Pagamento — ${enc(platLabel)} (200 Mts):*%0A`;
       refPag.split(/\r?\n/).forEach(function (line) {
-        if (line.trim()) mensagem += encodeURIComponent(line.trim()) + '%0A';
+        if (line.trim()) mensagem += enc(line.trim()) + '%0A';
       });
 
-      mensagem += `*Cliente declara:* pagamento efetuado (não reembolsável se faltar)%0A`;
-      mensagem += `%0A_Atendimento exclusivo com o Barbeiro Nelson. Confirmar pagamento antes de reservar._`;
-
       const waUrl = `https://wa.me/258845880006?text=${mensagem}`;
-      window.open(waUrl, '_blank');
 
-      // Guardar a marcação para o lembrete de calendário (antes do form.reset())
-      lastBooking = { servico: servico, data: data, horario: horario };
+      // Limpa o formulário (só depois de a marcação ser enviada no WhatsApp)
+      function resetBookingForm() {
+        form.reset();
+        if (form.pais) form.pais.value = '+258';
+        if (typeof applyPayPlatform === 'function') applyPayPlatform();
+
+        // Reset custom service select UI
+        if (customSelect) {
+          const labelEl = customSelect.querySelector('.custom-select-label');
+          const hiddenEl = document.getElementById('servico');
+          if (labelEl) labelEl.textContent = 'Selecione o serviço';
+          if (hiddenEl) hiddenEl.value = '';
+          customSelect.classList.remove('has-value');
+          customSelect.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
+        }
+      }
+
+      // Ordem: 1) lembrete no calendário  2) enviar no WhatsApp (o cliente carrega no botão)
+      lastBooking = { servico: servico, data: data, horario: horario, waUrl: waUrl, reset: resetBookingForm };
       updateCalendarLinks();
+      setModalState(false);
 
-      // Show confirmation modal
       if (modal) {
         modal.classList.add('open');
         document.body.style.overflow = 'hidden';
-      }
-
-      form.reset();
-      if (form.pais) form.pais.value = '+258';
-      if (typeof applyPayPlatform === 'function') applyPayPlatform();
-
-      // Reset custom service select UI
-      if (customSelect) {
-        const labelEl = customSelect.querySelector('.custom-select-label');
-        const hiddenEl = document.getElementById('servico');
-        if (labelEl) labelEl.textContent = 'Selecione o serviço';
-        if (hiddenEl) hiddenEl.value = '';
-        customSelect.classList.remove('has-value');
-        customSelect.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
       }
     });
   }

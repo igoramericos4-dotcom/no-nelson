@@ -292,15 +292,7 @@
               </div>
             </div>
           </div>
-          <div class="wed-notice reveal">
-            <p class="wn-badge">Aviso importante</p>
-            <h3>Confirmação de <span>marcação</span></h3>
-            <ul>
-              <li>Marcações confirmadas com pagamento de <span class="wn-highlight">200 Mts</span>.</li>
-              <li>Sem presença: <span class="wn-highlight">valor não reembolsado</span>.</li>
-              <li>Tolerância de atraso: <span class="wn-highlight">10 minutos</span>.</li>
-            </ul>
-          </div>
+          <p class="booking-note reveal">Marcações confirmadas com pagamento de 200 Mts · Sem presença, o valor não é reembolsado · Tolerância de atraso: 10 minutos.</p>
         </div>
       </div>
     </section>
@@ -309,15 +301,25 @@
   <!-- Confirmation Modal -->
   <div class="modal-overlay" id="confirm-modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
     <div class="modal">
-      <h3 id="modal-title">Reserva Enviada!</h3>
-      <p>Lembre-se de avisar ao Nelson sobre o seu agendamento assim que chegar à barbearia para garantir sua prioridade.</p>
-      <p class="modal-note">A marcação fica confirmada depois de o Nelson verificar o pagamento. Guarde já um lembrete no calendário do seu telemóvel: o alarme toca 2 horas antes.</p>
-      <div class="modal-actions modal-calendar">
-        <button type="button" class="btn btn-sm" id="add-to-calendar">Guardar lembrete no calendário</button>
-        <a href="#" class="btn btn-outline btn-sm" id="add-to-google" target="_blank" rel="noopener">Google Calendar</a>
+      <h3 id="modal-title">Quase lá!</h3>
+      <p class="modal-lead" id="modal-lead">A sua marcação só segue para o Nelson quando a enviar no WhatsApp (passo 2).</p>
+
+      <div class="modal-step">
+        <p class="modal-step-title">1. Guarde um lembrete <span>(opcional)</span></p>
+        <p class="modal-step-hint">O alarme toca 2 horas antes da marcação.</p>
+        <div class="modal-actions modal-calendar">
+          <button type="button" class="btn btn-sm" id="add-to-calendar">Guardar no calendário</button>
+          <a href="#" class="btn btn-outline btn-sm" id="add-to-google" target="_blank" rel="noopener">Google Calendar</a>
+        </div>
       </div>
+
+      <div class="modal-step">
+        <p class="modal-step-title">2. Envie a marcação ao Nelson</p>
+        <button type="button" class="btn" id="send-whatsapp" style="width:100%;">Enviar no WhatsApp</button>
+      </div>
+
+      <p class="modal-note">A marcação fica confirmada depois de o Nelson verificar o pagamento. Avise-o assim que chegar à barbearia.</p>
       <div class="modal-actions">
-        <a href="index.html" class="btn btn-sm">Voltar ao início</a>
         <button type="button" class="btn btn-outline btn-sm" data-close-modal>Fechar</button>
       </div>
     </div>

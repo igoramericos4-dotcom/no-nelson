@@ -1120,7 +1120,46 @@ h3 { font-size: clamp(1.2rem, 2.5vw, 1.5rem); }
 }
 
 .modal-calendar {
+  margin-bottom: 0;
+}
+
+.modal p.modal-lead {
   margin-bottom: 1.5rem;
+}
+
+.modal-step {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-step:last-of-type {
+  border-bottom: none;
+}
+
+.modal p.modal-step-title {
+  color: var(--white);
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.modal p.modal-step-title span {
+  color: var(--gray-light);
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+
+.modal p.modal-step-hint {
+  font-size: 0.8rem;
+  margin-bottom: 0.9rem;
+}
+
+.booking-note {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--gray-light);
 }
 
 /* ---------- Location ---------- */
